@@ -1,6 +1,8 @@
 // miner agent
 
 { include("$jacamoJar/templates/common-cartago.asl") }
+{ include("$jacamoJar/templates/common-moise.asl") }
+{ include("$jacamoJar/templates/org-obedient.asl") }
 
 /*
  * By Joao Leite
@@ -9,10 +11,21 @@
 
 /* beliefs */
 last_dir(null). // the last movement I did
-free.
 
 /* rules */
-/* this agent program doesn't have any rules */
++!collectgold[scheme(S)]
+  <- .print("I'm going to collect the gold!");
+     +free.
+
++!discovermap[scheme(S)] : gsize(_,W,H)
+  <- .print("I'm going to search for gold pieces");
+     for ( .range(X,1,W-1,6) ) {
+       !pos(X,1);
+       !pos(X,H-2);
+       !pos(X+3,H-2);
+       !pos(X+3,1);
+     }
+     .print("Finished searching").
 
 
 /* When free, agents wonder around. This is encoded with a plan that executes

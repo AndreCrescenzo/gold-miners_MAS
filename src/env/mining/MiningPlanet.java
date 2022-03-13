@@ -149,6 +149,7 @@ public class MiningPlanet extends Artifact {
             defineObsProperty("cell", x, y, obstacle);
         } else if (model.hasObject(WorldModel.GOLD, x, y)) {
             defineObsProperty("cell", x, y, gold);
+            logger.info("gold found at ("+x+","+y+")");
         }
 
         //if (model.hasObject(WorldModel.ENEMY, x, y))

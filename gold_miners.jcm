@@ -39,6 +39,17 @@ mas gold_miners {
         artifact map: tools.MineMap()
     }
 
+    organisation ominers: gm-os.xml {
+        group mine_group: gmgroup {
+            responsible-for: scheme1
+            players: miner1 collector
+                     miner2 explorer
+                     miner3 collector
+                     miner4 collector
+            }
+
+        scheme scheme1: goldMineSch
+    }
+
     class-path: lib                      // java class path
 }
-
