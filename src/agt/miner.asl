@@ -121,6 +121,20 @@ free.
      .print("Gold perceived: ",gold(X,Y));
      !init_handle(gold(X,Y)).
 
+/* If the agent passes by any undiscovered gold while heading for another gold
+ * picece, it will go for the new one.
+ */
++gold(X,Y)
+  :  not carrying_gold
+     & not free
+     & pos(AgX,AgY)
+     & .desire(handle(gold(CurrX,CurrY)))
+     & jia.dist(X,Y,AgX,AgY,DNewG)
+     & jia.dist(CurrX,CurrY,AgX,AgY,DCurrG)
+     & DNewG < DCurrG
+  <- .drop_desire(handle(gold(CurrX,CurrY)));
+     .print("I'll go for gold at (",X,",",Y,") instead.");
+     !init_handle(gold(X,Y)).
 
 /* The next plans encode how to handle a piece of gold.
  * The first one drops the desire to be near some location,
