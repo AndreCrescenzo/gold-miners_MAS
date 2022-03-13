@@ -152,7 +152,8 @@ score(0).
   <- .print("Handling ",gold(X,Y)," now.");
      !pos(X,Y);
      !ensure(pick,gold(X,Y));
-     !pos(0,0);
+     ?depot(_,TX,TY);
+     !pos(TX,TY);
      !ensure(drop, 0);
      ?score(N);
      -+score(N+1);
@@ -178,7 +179,7 @@ score(0).
 // fail if no gold there or not carrying_gold after pick!
 // handle(G) will "catch" this failure.
 
-+!ensure(drop, _) : carrying_gold & pos(0,0)
++!ensure(drop, _) : carrying_gold & pos(X,Y) & depot(_,X,Y)
   <- drop.
 
 
