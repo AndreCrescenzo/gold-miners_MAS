@@ -55,8 +55,12 @@ free.
      !near(X,Y).
 
 
-+!near(X,Y) : (pos(AgX,AgY) & jia.neighbour(AgX,AgY,X,Y)) | last_dir(skip) // I am near to some location if I am near it or the last action was skip (meaning that there are no paths to there)
-   <- +near(X,Y).
++!near(X,Y) : (pos(AgX,AgY) & jia.neighbour(AgX,AgY,X,Y)) // I am near to some location if I am near it...
+   <- .print("I'm in the neighborhood of (",X,",",Y,")");
+      +near(X,Y).
++!near(X,Y) : last_dir(skip) // ...or the last action was skip (meaning that there are no paths to there)
+   <- .print("I couldn't reach (",X,",",Y,")");
+      +near(X,Y).
 +!near(X,Y) : not near(X,Y)
    <- !next_step(X,Y);
       !near(X,Y).
