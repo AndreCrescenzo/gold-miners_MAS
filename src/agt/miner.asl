@@ -210,6 +210,12 @@ free.
 +!calc_gold_distance([_|R],RD)
   <- !calc_gold_distance(R,RD).
 
+// Check if I'm winning
++winning(A,S)[source(learder)] : .my_name(A)
+  <- -winning(A,S);
+     .print("I'm winning!").
++winning(A,S)[source(leader)] : true
+  <- -winning(A,S).
 
 /* end of a simulation */
 
