@@ -21,4 +21,13 @@ score(miner4,0).
    <- -score(A,S);
       +score(A,S+1);
       -dropped[source(A)];
-      .print("Agent ",A," has dropped ",S+1," pieces of gold").
+      .print("Agent ",A," has dropped ",S+1," pieces of gold");
+      !update_winner(A,S).
+
++!update_winner(A,S) : not winning(_,_)
+   <- +winning(A,S);
+      .print("Agent ",A," is winning").
++!update_winner(A,S_A) : winning(W,S_W) & S_A > S_W
+   <- -+winning(A,S_A);
+      .print("Agent ",A," is winning").
++!update_winner(_,_).
