@@ -10,7 +10,6 @@
 /* beliefs */
 last_dir(null). // the last movement I did
 free.
-score(0).
 
 /* rules */
 /* this agent program doesn't have any rules */
@@ -155,9 +154,7 @@ score(0).
      ?depot(_,TX,TY);
      !pos(TX,TY);
      !ensure(drop, 0);
-     ?score(N);
-     -+score(N+1);
-     .print("My score: ",N+1);
+     .send(leader,tell,dropped);
      .print("Finish handling ",gold(X,Y));
      !!choose_gold.
 
