@@ -168,7 +168,7 @@ free.
      ?depot(_,TX,TY);
      !pos(TX,TY);
      !ensure(drop, 0);
-     .send(leader,tell,dropped);
+     score;
      .print("Finish handling ",gold(X,Y));
      !!choose_gold.
 
@@ -225,11 +225,11 @@ free.
   <- !calc_gold_distance(R,RD).
 
 // Check if I'm winning
-+winning(A,S)[source(learder)] : .my_name(A)
-  <- -winning(A,S);
++winner(Ag) : .my_name(Ag)
+  <- -winning(Ag);
      .print("I'm winning!").
-+winning(A,S)[source(leader)] : true
-  <- -winning(A,S).
++winner(Ag) : true
+  <- -winner(Ag).
 
 /* end of a simulation */
 
