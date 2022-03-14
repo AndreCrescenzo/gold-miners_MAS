@@ -12,16 +12,16 @@
 
 mas gold_miners {
     agent miner1 : miner.asl  {
-        focus: mining.m1view, tools.scoreboard
+        focus: mining.m1view, tools.scoreboard, tools.map
     }
     agent miner2 : miner.as l {
-        focus: mining.m2view, tools.scoreboard
+        focus: mining.m2view, tools.scoreboard, tools.map
     }
     agent miner3 : miner.asl  {
-        focus: mining.m3view, tools.scoreboard
+        focus: mining.m3view, tools.scoreboard, tools.map
     }
     agent miner4 : miner.asl  {
-        focus: mining.m4view, tools.scoreboard
+        focus: mining.m4view, tools.scoreboard, tools.map
     }
 
     workspace mining {
@@ -36,6 +36,7 @@ mas gold_miners {
 
     workspace tools {
         artifact scoreboard: tools.Scoreboard()
+        artifact map: tools.MineMap()
     }
 
     class-path: lib                      // java class path

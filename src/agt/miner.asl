@@ -111,30 +111,50 @@ free.
  * prints a message. Finally, it calls a plan to handle that piece of gold.
  */
 
-// perceived golds are included as self beliefs (to not be removed once not seen anymore)
-+cell(X,Y,gold) <- +gold(X,Y).
+// perceived golds are marked on the map so everyone can pick them.
++cell(X,Y,gold) : not gold(X,Y)
+  <- mark_gold(X,Y);
+     +gold_available.
 
-@pgold[atomic]           // atomic: so as not to handle another event until handle gold is initialised
+// once there are golds marked on the map, the agent must go for it
++n_golds(N)
+  :  N > 0
+  <- -n_golds(N);
+     +gold_available.
++n_golds(N) : true
+  <- -n_golds(N);
+     -gold_available.
+    
++gold_available : not carrying_gold & free <- !get_gold.
+
++!get_gold
+  :  pos(AgX,AgY) & not carrying_gold & gold_available
+  <- get_gold(AgX,AgY,GdX,GdY);
+     -gold(_,_);
+     +gold(GdX,GdY).
++!get_gold : not gold_available <- -+free.
++!get_gold <- .print("something went very bad").
+
+@pgold1[atomic]
 +gold(X,Y)
-  :  not carrying_gold & free
-  <- -free;
-     .print("Gold perceived: ",gold(X,Y));
-     !init_handle(gold(X,Y)).
-
+  : X < 0 & Y < 0
+  <- -gold(X,Y).
 /* If the agent passes by any undiscovered gold while heading for another gold
  * picece, it will go for the new one.
  */
+@pgold2[atomic]           // atomic: so as not to handle another event until handle gold is initialised
 +gold(X,Y)
   :  not carrying_gold
      & not free
      & pos(AgX,AgY)
      & .desire(handle(gold(CurrX,CurrY)))
-     & jia.dist(X,Y,AgX,AgY,DNewG)
-     & jia.dist(CurrX,CurrY,AgX,AgY,DCurrG)
-     & DNewG < DCurrG
   <- .drop_desire(handle(gold(CurrX,CurrY)));
      .print("I'll go for gold at (",X,",",Y,") instead.");
      !init_handle(gold(X,Y)).
+@pgold3[atomic]
++gold(X,Y)
+  :  not carrying_gold & pos(AgX,AgY)
+  <- !init_handle(gold(X,Y)).
 
 /* The next plans encode how to handle a piece of gold.
  * The first one drops the desire to be near some location,
@@ -158,6 +178,7 @@ free.
 +!init_handle(Gold)
   :  pos(X,Y)
   <- .print("Going for ",Gold);
+     -free;
      !!handle(Gold). // must use !! to perform "handle" as not atomic
 
 +!handle(gold(X,Y))
@@ -170,16 +191,16 @@ free.
      !ensure(drop, 0);
      score;
      .print("Finish handling ",gold(X,Y));
-     !!choose_gold.
+     !!get_gold.
 
 // if ensure(pick/drop) failed, pursue another gold
 -!handle(G) : G
   <- .print("failed to catch gold ",G);
      .abolish(G); // ignore source
-     !!choose_gold.
+     !!get_gold.
 -!handle(G) : true
   <- .print("failed to handle ",G,", it isn't in the BB anyway");
-     !!choose_gold.
+     !!get_gold.
 
 /* The next plans deal with picking up and dropping gold. */
 
@@ -192,37 +213,6 @@ free.
 
 +!ensure(drop, _) : carrying_gold & pos(X,Y) & depot(_,X,Y)
   <- drop.
-
-
-
-/* The next plans encode how the agent can choose the next gold piece
- * to pursue (the closest one to its current position) or,
- * if there is no known gold location, makes the agent believe it is free.
- */
-+!choose_gold
-  :  not gold(_,_)
-  <- -+free.
-
-// Finished one gold, but others left
-// find the closest gold among the known options,
-+!choose_gold
-  :  gold(_,_)
-  <- .findall(gold(X,Y),gold(X,Y),LG);
-     !calc_gold_distance(LG,LD);
-     .length(LD,LLD); LLD > 0;
-     .print("Gold distances: ",LD,LLD);
-     .min(LD,d(_,NewG));
-     .print("Next gold is ",NewG);
-     !!handle(NewG).
--!choose_gold <- -+free.
-
-+!calc_gold_distance([],[]).
-+!calc_gold_distance([gold(GX,GY)|R],[d(D,gold(GX,GY))|RD])
-  :  pos(IX,IY)
-  <- jia.dist(IX,IY,GX,GY,D);
-     !calc_gold_distance(R,RD).
-+!calc_gold_distance([_|R],RD)
-  <- !calc_gold_distance(R,RD).
 
 // Check if I'm winning
 +winner(Ag) : .my_name(Ag)
